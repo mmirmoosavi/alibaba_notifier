@@ -2,7 +2,7 @@ import json
 import time
 import os
 import requests
-
+import random
 
 class TelegramBot:
     def __init__(self):
@@ -20,21 +20,20 @@ class TelegramBot:
 
 class AliBabaNotifier:
 
-    def __init__(self):
+    def __init__(self, random_number:int):
         # Define the POST request data for details of flight
         self.post_data = {
             "infant": 0,
             "child": 0,
             "adult": 1,
             "departureDate": os.environ.get("DEPARTURE_DATE", "2023-12-10"),
-            "origin": "IKA",
-            "destination": "ISTALL",
+            "origin": "ISTALL",
+            "destination": "IKA",
             "flightClass": "economy",
             "userVariant": "pricing-ist-v1-decrease"
         }
 
         # Define the POST request headers
-
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0',
             'Accept': 'application/json, text/plain, */*',
@@ -42,7 +41,7 @@ class AliBabaNotifier:
             'Accept-Encoding': 'gzip, deflate, br',
             'Content-Type': 'application/json',
             'ab-channel': 'WEB-NEW,PRODUCTION,CSR,www.alibaba.ir,N,Firefox,119.0,N,N,Ubuntu',
-            'tracing-sessionid': '1699467872113',
+            'tracing-sessionid': f'1699{random_number}',
             'tracing-device': 'N,Firefox,119.0,N,N,Ubuntu',
             'Origin': 'https://www.alibaba.ir',
             'Connection': 'keep-alive',
@@ -115,12 +114,14 @@ class AliBabaNotifier:
 
 if __name__ == '__main__':
 
-    alibaba_notifier = AliBabaNotifier()
     telegram_bot_object = TelegramBot()
     while True:
+        random_number = random.randint(10 ** 8, (10 ** 9) - 1)
+        alibaba_notifier = AliBabaNotifier(random_number)
+
         cheapest_data = alibaba_notifier.get_cheapest_data()
         alibaba_notifier.send_total_data_telegram_channel(telegram_bot_object,
                                                           cheapest_data,
                                                           float(os.environ.get("PRICE_THRESHOLD", 35000000))
                                                           )
-        time.sleep(5 * 60)
+        time.sleep(60)
