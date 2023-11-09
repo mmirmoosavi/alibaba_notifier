@@ -44,7 +44,7 @@ Before running the Docker container, ensure you have the following prerequisites
 ( if you add the bot on your channel you can see channel chat id in json "result" section)
 
 5. create .env file on your-repo
-6. add BOT_TOKEN and also CHANNEL_CHAT_ID in and departure Date on your env file
+6. add **BOT_TOKEN**, **CHANNEL_CHAT_ID**, **DEPARTURE_DATE**, **PRICE_THRESHOLD** on your env file
 7. build docker image
 
     ```bash
