@@ -123,4 +123,4 @@ if __name__ == '__main__':
                                                           cheapest_data,
                                                           float(os.environ.get("PRICE_THRESHOLD", 35000000))
                                                           )
-        time.sleep(60)
+        time.sleep(5 * 60)
