@@ -1,0 +1,2 @@
+# ignore python venv files
+**/venv/
