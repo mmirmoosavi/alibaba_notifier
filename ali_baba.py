@@ -26,7 +26,7 @@ class AliBabaNotifier:
             "infant": 0,
             "child": 0,
             "adult": 1,
-            "departureDate": "2023-11-10",
+            "departureDate": os.environ.get("departureDate", "2023-12-10"),
             "origin": "IKA",
             "destination": "ISTALL",
             "flightClass": "economy",
