@@ -24,7 +24,8 @@ Key Features:
 
 ## Prerequisites
 
-Before running the Docker container, ensure you have the following prerequisites installed on your system:
+Before running the Docker container, ensure you have the following prerequisites installed on your system 
+(system or server should not have Iran IP because of Telegram Filtering) :
 
 - Docker: [Install Docker](https://docs.docker.com/get-docker/)
 
