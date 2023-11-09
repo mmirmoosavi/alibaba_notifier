@@ -26,7 +26,7 @@ class AliBabaNotifier:
             "infant": 0,
             "child": 0,
             "adult": 1,
-            "departureDate": os.environ.get("departureDate", "2023-12-10"),
+            "departureDate": os.environ.get("DEPARTURE_DATE", "2023-12-10"),
             "origin": "IKA",
             "destination": "ISTALL",
             "flightClass": "economy",
@@ -119,6 +119,8 @@ if __name__ == '__main__':
     telegram_bot_object = TelegramBot()
     while True:
         cheapest_data = alibaba_notifier.get_cheapest_data()
-        print(cheapest_data)
-        # alibaba_notifier.send_total_data_telegram_channel(telegram_bot_object, cheapest_data, 4000000000.0)
+        alibaba_notifier.send_total_data_telegram_channel(telegram_bot_object,
+                                                          cheapest_data,
+                                                          float(os.environ.get("PRICE_THRESHOLD", 35000000))
+                                                          )
         time.sleep(5)
