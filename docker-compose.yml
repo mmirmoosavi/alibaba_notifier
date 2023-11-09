@@ -1,6 +1,7 @@
 version: '3'
 services:
   alibaba_notifier:
+    container_name: alibaba_notifier
     build:
       context: .
       dockerfile: Dockerfile
