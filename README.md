@@ -45,13 +45,13 @@ Before running the Docker container, ensure you have the following prerequisites
 
 5. create .env file on your-repo
 6. add **BOT_TOKEN**, **CHANNEL_CHAT_ID**, **DEPARTURE_DATE**, **PRICE_THRESHOLD** on your env file
-7. build docker image
+7. start the bot
 
     ```bash
-   docker build -t aliba_notifier .
+   docker-compose up --build -d
 
-8. run docker container
+8. stop the bot 
 
     ```bash
-   docker run --env_file=.env alibaba_notifier
+   docker-compose down
 
