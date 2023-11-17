@@ -4,6 +4,12 @@ import os
 import requests
 import random
 
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
+
+
 class TelegramBot:
     def __init__(self):
         self.bot_token = os.environ.get('BOT_TOKEN')
@@ -20,15 +26,17 @@ class TelegramBot:
 
 class AliBabaNotifier:
 
-    def __init__(self, random_number:int):
+    def __init__(self, random_number: int):
+        if not (os.environ.get('ORIGIN') or os.environ.get('DESTINATION')):
+            raise Exception(' you should pass origin and destination on env file')
         # Define the POST request data for details of flight
         self.post_data = {
             "infant": 0,
             "child": 0,
             "adult": 1,
             "departureDate": os.environ.get("DEPARTURE_DATE", "2023-12-10"),
-            "origin": "ISTALL",
-            "destination": "IKA",
+            "origin": os.environ.get('ORIGIN'),
+            "destination": os.environ.get('DESTINATION'),
             "flightClass": "economy",
             "userVariant": "pricing-ist-v1-decrease"
         }
@@ -55,7 +63,19 @@ class AliBabaNotifier:
 
     def get_cheapest_data(self):
         cheapest_data = {}
-        post_response = requests.post(self.post_url, json=self.post_data, headers=self.headers, timeout=10)
+        post_request_success_flag = False
+        post_request_counter = 0
+        while (not post_request_success_flag and post_request_counter <= 10):
+            try:
+                post_response = requests.post(self.post_url, json=self.post_data, headers=self.headers, timeout=10)
+                post_request_success_flag = True
+
+            except requests.exceptions.ReadTimeout:
+                post_request_success_flag = False
+                post_request_counter += 1
+        if not post_request_success_flag:
+            exit()
+
         if post_response.status_code == 200:
 
             post_data = post_response.json()
