@@ -19,9 +19,12 @@ class TelegramBot:
             raise Exception('you should specify you bot token and also channel chat id')
 
     def send_message(self, text):
-        url = f'https://api.telegram.org/bot{self.bot_token}/sendMessage?chat_id={self.channel_chat_id}&text={text}'
-        response = requests.get(url, timeout=10)
-        return response
+        try:
+            url = f'https://api.telegram.org/bot{self.bot_token}/sendMessage?chat_id={self.channel_chat_id}&text={text}'
+            response = requests.get(url, timeout=10)
+            return response
+        except Exception:
+            return None
 
 
 class AliBabaNotifier:
@@ -70,11 +73,11 @@ class AliBabaNotifier:
                 post_response = requests.post(self.post_url, json=self.post_data, headers=self.headers, timeout=10)
                 post_request_success_flag = True
 
-            except requests.exceptions.ReadTimeout:
+            except Exception:
                 post_request_success_flag = False
                 post_request_counter += 1
         if not post_request_success_flag:
-            exit()
+            return None
 
         if post_response.status_code == 200:
 
@@ -114,7 +117,7 @@ class AliBabaNotifier:
                 print("Request ID not found in the POST response.")
         else:
             print(f"Failed to retrieve data from the POST request. Status code: {post_response.status_code}")
-
+            return None
         return cheapest_data
 
     def send_total_data_telegram_channel(self, telegram_bot_object: TelegramBot, data: dict, threshold: float):
@@ -127,7 +130,6 @@ class AliBabaNotifier:
                 # Initialize the Telegram Bot
                 telegram_instance = telegram_bot_object
                 response = telegram_instance.send_message(json.dumps(data, indent=4))
-                print(response.status_code)
         else:
             print("The 'total' field is not present in the first proposal.")
 
@@ -140,8 +142,9 @@ if __name__ == '__main__':
         alibaba_notifier = AliBabaNotifier(random_number)
 
         cheapest_data = alibaba_notifier.get_cheapest_data()
-        alibaba_notifier.send_total_data_telegram_channel(telegram_bot_object,
-                                                          cheapest_data,
-                                                          float(os.environ.get("PRICE_THRESHOLD", 35000000))
-                                                          )
+        if cheapest_data:
+            alibaba_notifier.send_total_data_telegram_channel(telegram_bot_object,
+                                                              cheapest_data,
+                                                              float(os.environ.get("PRICE_THRESHOLD", 35000000))
+                                                              )
         time.sleep(5 * 60)
