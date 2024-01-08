@@ -89,30 +89,32 @@ class AliBabaNotifier:
                 self.get_url = f'https://ws.alibaba.ir/api/v1/flights/international/proposal-requests/{request_id}'
 
                 get_response = requests.get(self.get_url, headers=self.headers, timeout=10)
+                try:
+                    if get_response.status_code == 200:
+                        get_data = get_response.json()
+                        # Extract and print the desired information from the GET response
+                        results = get_data.get('result', {})
+                        proposals = results.get('proposals', [])
+                        if proposals:
+                            first_proposal = proposals[0]
 
-                if get_response.status_code == 200:
-                    get_data = get_response.json()
-                    # Extract and print the desired information from the GET response
-                    results = get_data.get('result', {})
-                    proposals = results.get('proposals', [])
-                    if proposals:
-                        first_proposal = proposals[0]
-
-                        arrivalDateTime = first_proposal['leavingFlightGroup']["arrivalDateTime"]
-                        departureDateTime = first_proposal['leavingFlightGroup']["departureDateTime"]
-                        total_price = first_proposal.get('total')
-                        if total_price and arrivalDateTime and departureDateTime:
-                            cheapest_data["arrivalDateTime"] = arrivalDateTime
-                            cheapest_data["departureDateTime"] = departureDateTime
-                            cheapest_data["total_price"] = total_price
-                            cheapest_data.update(self.post_data)
-                            print(f"Total: {total_price}")
+                            arrivalDateTime = first_proposal['leavingFlightGroup']["arrivalDateTime"]
+                            departureDateTime = first_proposal['leavingFlightGroup']["departureDateTime"]
+                            total_price = first_proposal.get('total')
+                            if total_price and arrivalDateTime and departureDateTime:
+                                cheapest_data["arrivalDateTime"] = arrivalDateTime
+                                cheapest_data["departureDateTime"] = departureDateTime
+                                cheapest_data["total_price"] = total_price
+                                cheapest_data.update(self.post_data)
+                                print(f"Total: {total_price}")
+                            else:
+                                print("The 'total' cannot get data correctly")
                         else:
-                            print("The 'total' cannot get data correctly")
+                            print("No proposals found in the GET response.")
                     else:
-                        print("No proposals found in the GET response.")
-                else:
-                    print(f"Failed to retrieve data from the GET request. Status code: {get_response.status_code}")
+                        print(f"Failed to retrieve data from the GET request. Status code: {get_response.status_code}")
+                except Exception:
+                    print("Exception occured")
             else:
                 print("Request ID not found in the POST response.")
         else:
