@@ -87,9 +87,8 @@ class AliBabaNotifier:
                 # Build the URL for the GET request
                 # Send the GET request
                 self.get_url = f'https://ws.alibaba.ir/api/v1/flights/international/proposal-requests/{request_id}'
-
-                get_response = requests.get(self.get_url, headers=self.headers, timeout=10)
                 try:
+                    get_response = requests.get(self.get_url, headers=self.headers, timeout=10)
                     if get_response.status_code == 200:
                         get_data = get_response.json()
                         # Extract and print the desired information from the GET response
